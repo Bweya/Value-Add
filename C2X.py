@@ -11,7 +11,7 @@ def trade():
     filter_column = 'Period after CO value date'
     DateNow = datetime.datetime.now()
 
-    year = DateNow.strftime("%Y")
+    year = '2019'
 
 
     files = os.listdir('files')
@@ -200,7 +200,7 @@ def trade():
     worksheet.write('N3', 'Base Curr Equiv: CO Rate', bold )
     worksheet.write('O3', 'Base Curr Equiv: Market Rate', bold )
     worksheet.write('P3', 'CO Rate / Book Rate', bold )
-    worksheet.write('Q3', 'Total Value Added', bold )
+    worksheet.write('Q3', 'Value Added', bold )
 
     '''
     worksheet.write('M3', 'Base Curr Equiv: Market Rate', bold )
@@ -218,12 +218,17 @@ def trade():
     j = 0
     count_record = 1
     row_record = count_record + 3
+    sum = 0;
     for y in DealNumber:
 
         for x in usdIndex_get_DealNumbers:
             date_133US = FX133TradeData[32][x].replace(".","/");
             date_133USobj = datetime.datetime.strptime(date_133US, '%d/%m/%Y')
             periodUS = (date_133USobj-TradeData[9][approved_index[j]]).days
+            if (TradeData[9][approved_index[j]].date()).strftime('%A') == 'Friday':
+
+                periodUS = periodUS-2
+
             if y == FX133TradeData[48][x] and HqTradeData[7][j][:3] != 'DKK' and periodUS >= 0:
                 #and (TradeData[9][approved_index[j]]-date_133USobj) >= timedelta(days = d):
 
@@ -241,8 +246,6 @@ def trade():
 
                         #--------EXCEL------------------------------
 
-
-
                         worksheet.write('A'+str(row_record), count_record, the_columns)
                         worksheet.write('B'+str(row_record), HqTradeData[0][j], the_columns)
                         worksheet.write('C'+str(row_record), HqTradeData[15][j].date(), date_format)
@@ -256,11 +259,32 @@ def trade():
                         worksheet.write('K'+str(row_record), str(periodUS)+' days', the_columns)
                         worksheet.write('L'+str(row_record), FX133TradeData[3][x], the_columns)
 
-                        worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][x]), the_columns)
-                        worksheet.write('N'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/HqTradeData[11][j]), the_columns)
-                        worksheet.write('O'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/FX133TradeData[35][x]), the_columns)
-                        worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
-                        worksheet.write('Q'+str(row_record), "{:,.2f}".format((HqTradeData[9][j]/HqTradeData[11][j])-(HqTradeData[9][j]/FX133TradeData[35][x])), the_columns)
+                        #dealno = HqTradeData[2][j]
+                        indexed = 0
+
+                        for check133_dealno in FX133TradeData[48]:
+
+                            if (indexed > USDstart_index and indexed < USDstop_index) or (indexed > EURstart_index and indexed < EURstop_index):
+
+                                print("Skip USD and EUR")
+
+                            else:
+
+                                if y == check133_dealno:
+
+                                    worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][indexed]), the_columns)
+
+                                    worksheet.write('N'+str(row_record), "{:,.2f}".format(FX133TradeData[20][indexed]), the_columns)
+                                    worksheet.write('O'+str(row_record), "{:,.2f}".format(FX133TradeData[13][indexed]), the_columns)
+                                    worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
+                                    worksheet.write('Q'+str(row_record), "{:,.2f}".format((FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])), the_columns)
+                                    try:
+                                        sum += (FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])
+                                    except e:
+                                        print("NaN values")
+                            indexed += 1
+
+
                         '''
                         worksheet.write('M'+str(row_record), str((HqTradeData[9][j]/FX133TradeData[13][x])), the_columns)
                         worksheet.write('N'+str(row_record), FX133TradeData[16][x], the_columns)
@@ -294,11 +318,31 @@ def trade():
                         worksheet.write('K'+str(row_record), str(periodUS+3)+' days',the_columns)
                         worksheet.write('L'+str(row_record), FX133TradeData[3][x], the_columns)
 
-                        worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][x]), the_columns)
-                        worksheet.write('N'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/HqTradeData[11][j]), the_columns)
-                        worksheet.write('O'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/FX133TradeData[35][x]), the_columns)
-                        worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
-                        worksheet.write('Q'+str(row_record), "{:,.2f}".format((HqTradeData[9][j]/HqTradeData[11][j])-(HqTradeData[9][j]/FX133TradeData[35][x])), the_columns)
+                        #dealno = HqTradeData[2][j]
+                        indexed = 0
+
+                        for check133_dealno in FX133TradeData[48]:
+
+                            if (indexed > USDstart_index and indexed < USDstop_index) or (indexed > EURstart_index and indexed < EURstop_index):
+
+                                #print("Skip USD and EUR")
+                                print("Skip USD and EUR")
+
+                            else:
+
+                                if y == check133_dealno:
+
+                                    worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][indexed]), the_columns)
+
+                                    worksheet.write('N'+str(row_record), "{:,.2f}".format(FX133TradeData[20][indexed]), the_columns)
+                                    worksheet.write('O'+str(row_record), "{:,.2f}".format(FX133TradeData[13][indexed]), the_columns)
+                                    worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
+                                    worksheet.write('Q'+str(row_record), "{:,.2f}".format((FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])), the_columns)
+                                    try:
+                                        sum += (FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])
+                                    except e:
+                                        print("NaN values")
+                            indexed += 1
                         '''
                         worksheet.write('M'+str(row_record), str((HqTradeData[9][j]/FX133TradeData[13][x])), the_columns)
                         worksheet.write('N'+str(row_record), FX133TradeData[16][x], the_columns)
@@ -331,11 +375,31 @@ def trade():
                         worksheet.write('K'+str(row_record), str(periodUS)+' days', the_columns)
                         worksheet.write('L'+str(row_record), FX133TradeData[3][x], the_columns)
 
-                        worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][x]), the_columns)
-                        worksheet.write('N'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/HqTradeData[11][j]), the_columns)
-                        worksheet.write('O'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/FX133TradeData[35][x]), the_columns)
-                        worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
-                        worksheet.write('Q'+str(row_record), "{:,.2f}".format((HqTradeData[9][j]/HqTradeData[11][j])-(HqTradeData[9][j]/FX133TradeData[35][x])), the_columns)
+                        #dealno = HqTradeData[2][j]
+                        indexed = 0
+
+                        for check133_dealno in FX133TradeData[48]:
+
+                            if (indexed > USDstart_index and indexed < USDstop_index) or (indexed > EURstart_index and indexed < EURstop_index):
+
+                                #print("Skip USD and EUR")
+                                print("Skip USD and EUR")
+
+                            else:
+
+                                if y == check133_dealno:
+
+                                    worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][indexed]), the_columns)
+
+                                    worksheet.write('N'+str(row_record), "{:,.2f}".format(FX133TradeData[20][indexed]), the_columns)
+                                    worksheet.write('O'+str(row_record), "{:,.2f}".format(FX133TradeData[13][indexed]), the_columns)
+                                    worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
+                                    worksheet.write('Q'+str(row_record), "{:,.2f}".format((FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])), the_columns)
+                                    try:
+                                        sum += (FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])
+                                    except e:
+                                        print("NaN values")
+                            indexed += 1
                         '''
                         worksheet.write('M'+str(row_record), str((HqTradeData[9][j]/FX133TradeData[13][x])), the_columns)
                         worksheet.write('N'+str(row_record), FX133TradeData[16][x], the_columns)
@@ -370,11 +434,31 @@ def trade():
                         worksheet.write('K'+str(row_record), str(periodUS+3)+' days', the_columns)
                         worksheet.write('L'+str(row_record), FX133TradeData[3][x], the_columns)
 
-                        worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][x]), the_columns)
-                        worksheet.write('N'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/HqTradeData[11][j]), the_columns)
-                        worksheet.write('O'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/FX133TradeData[35][x]), the_columns)
-                        worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
-                        worksheet.write('Q'+str(row_record), "{:,.2f}".format((HqTradeData[9][j]/HqTradeData[11][j])-(HqTradeData[9][j]/FX133TradeData[35][x])), the_columns)
+                        #dealno = HqTradeData[2][j]
+                        indexed = 0
+
+                        for check133_dealno in FX133TradeData[48]:
+
+                            if (indexed > USDstart_index and indexed < USDstop_index) or (indexed > EURstart_index and indexed < EURstop_index):
+
+                                #print("Skip USD and EUR")
+                                print("Skip USD and EUR")
+
+                            else:
+
+                                if y == check133_dealno:
+
+                                    worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][indexed]), the_columns)
+
+                                    worksheet.write('N'+str(row_record), "{:,.2f}".format(FX133TradeData[20][indexed]), the_columns)
+                                    worksheet.write('O'+str(row_record), "{:,.2f}".format(FX133TradeData[13][indexed]), the_columns)
+                                    worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
+                                    worksheet.write('Q'+str(row_record), "{:,.2f}".format((FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])), the_columns)
+                                    try:
+                                        sum += (FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])
+                                    except e:
+                                        print("NaN values")
+                            indexed += 1
                         '''
                         worksheet.write('M'+str(row_record), str((HqTradeData[9][j]/FX133TradeData[13][x])), the_columns)
                         worksheet.write('N'+str(row_record), FX133TradeData[16][x], the_columns)
@@ -394,6 +478,9 @@ def trade():
             date_133EU = FX133TradeData[32][x].replace(".","/");
             date_133EUobj = datetime.datetime.strptime(date_133EU, '%d/%m/%Y')
             periodEU = (date_133EUobj-TradeData[9][approved_index[j]]).days
+            if (TradeData[9][approved_index[j]].date()).strftime('%A') == 'Friday':
+
+                periodEU = periodEU-2
             if y == FX133TradeData[48][x] and HqTradeData[7][j][:3] != 'DKK' and periodEU >= 0:
 
 
@@ -423,11 +510,32 @@ def trade():
                         worksheet.write('K'+str(row_record), str(periodEU)+' days', the_columns)
                         worksheet.write('L'+str(row_record), FX133TradeData[3][x], the_columns )
 
-                        worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][x]), the_columns)
-                        worksheet.write('N'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/HqTradeData[11][j]), the_columns)
-                        worksheet.write('O'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/FX133TradeData[35][x]), the_columns)
-                        worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
-                        worksheet.write('Q'+str(row_record), "{:,.2f}".format((HqTradeData[9][j]/HqTradeData[11][j])-(HqTradeData[9][j]/FX133TradeData[35][x])), the_columns)
+                        #dealno = HqTradeData[2][j]
+                        indexed = 0
+
+                        for check133_dealno in FX133TradeData[48]:
+
+                            if (indexed > USDstart_index and indexed < USDstop_index) or (indexed > EURstart_index and indexed < EURstop_index):
+
+                                #print("Skip USD and EUR")
+                                print("Skip USD and EUR")
+
+                            else:
+
+                                if y == check133_dealno:
+
+                                    worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][indexed]), the_columns)
+
+                                    worksheet.write('N'+str(row_record), "{:,.2f}".format(FX133TradeData[20][indexed]), the_columns)
+                                    worksheet.write('O'+str(row_record), "{:,.2f}".format(FX133TradeData[13][indexed]), the_columns)
+                                    worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
+                                    worksheet.write('Q'+str(row_record), "{:,.2f}".format((FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])), the_columns)
+                                    try:
+                                        sum += (FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])
+                                    except e:
+                                        print("NaN values")
+                            indexed += 1
+
                         '''
                         worksheet.write('M'+str(row_record), str((HqTradeData[9][j]/FX133TradeData[13][x])), the_columns)
                         worksheet.write('N'+str(row_record), FX133TradeData[16][x], the_columns)
@@ -459,11 +567,31 @@ def trade():
                         worksheet.write('K'+str(row_record), str(periodEU+3)+' days', the_columns)
                         worksheet.write('L'+str(row_record), FX133TradeData[3][x], the_columns)
 
-                        worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][x]), the_columns)
-                        worksheet.write('N'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/HqTradeData[11][j]), the_columns)
-                        worksheet.write('O'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/FX133TradeData[35][x]), the_columns)
-                        worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
-                        worksheet.write('Q'+str(row_record), "{:,.2f}".format((HqTradeData[9][j]/HqTradeData[11][j])-(HqTradeData[9][j]/FX133TradeData[35][x])), the_columns)
+                        #dealno = HqTradeData[2][j]
+                        indexed = 0
+
+                        for check133_dealno in FX133TradeData[48]:
+
+                            if (indexed > USDstart_index and indexed < USDstop_index) or (indexed > EURstart_index and indexed < EURstop_index):
+
+                                #print("Skip USD and EUR")
+                                print("Skip USD and EUR")
+
+                            else:
+
+                                if y == check133_dealno:
+
+                                    worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][indexed]), the_columns)
+
+                                    worksheet.write('N'+str(row_record), "{:,.2f}".format(FX133TradeData[20][indexed]), the_columns)
+                                    worksheet.write('O'+str(row_record), "{:,.2f}".format(FX133TradeData[13][indexed]), the_columns)
+                                    worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
+                                    worksheet.write('Q'+str(row_record), "{:,.2f}".format((FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])), the_columns)
+                                    try:
+                                        sum += (FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])
+                                    except e:
+                                        print("NaN values")
+                            indexed += 1
                         '''
                         worksheet.write('M'+str(row_record), str((HqTradeData[9][j]/FX133TradeData[13][x])), the_columns)
                         worksheet.write('N'+str(row_record), FX133TradeData[16][x], the_columns)
@@ -494,11 +622,32 @@ def trade():
                         worksheet.write('K'+str(row_record), str(periodEU)+' days', the_columns)
                         worksheet.write('L'+str(row_record), FX133TradeData[3][x], the_columns)
 
-                        worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][x]), the_columns)
-                        worksheet.write('N'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/HqTradeData[11][j]), the_columns)
-                        worksheet.write('O'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/FX133TradeData[35][x]), the_columns)
-                        worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
-                        worksheet.write('Q'+str(row_record), "{:,.2f}".format((HqTradeData[9][j]/HqTradeData[11][j])-(HqTradeData[9][j]/FX133TradeData[35][x])), the_columns)
+                        #dealno = HqTradeData[2][j]
+                        indexed = 0
+
+                        for check133_dealno in FX133TradeData[48]:
+
+                            if (indexed > USDstart_index and indexed < USDstop_index) or (indexed > EURstart_index and indexed < EURstop_index):
+
+                                #print("Skip USD and EUR")
+                                print("Skip USD and EUR")
+
+                            else:
+
+                                if y == check133_dealno:
+
+                                    worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][indexed]), the_columns)
+
+                                    worksheet.write('N'+str(row_record), "{:,.2f}".format(FX133TradeData[20][indexed]), the_columns)
+                                    worksheet.write('O'+str(row_record), "{:,.2f}".format(FX133TradeData[13][indexed]), the_columns)
+                                    worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
+                                    worksheet.write('Q'+str(row_record), "{:,.2f}".format((FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])), the_columns)
+                                    try:
+                                        sum += (FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])
+                                    except e:
+                                        print("NaN values")
+                            indexed += 1
+
                         '''
                         worksheet.write('M'+str(row_record), str((HqTradeData[9][j]/FX133TradeData[13][x])), the_columns)
                         worksheet.write('N'+str(row_record), FX133TradeData[16][x], the_columns)
@@ -528,11 +677,35 @@ def trade():
                         worksheet.write('K'+str(row_record), str(periodEU+3)+' days', the_columns)
                         worksheet.write('L'+str(row_record), FX133TradeData[3][x], the_columns)
 
-                        worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][x]), the_columns)
-                        worksheet.write('N'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/HqTradeData[11][j]), the_columns)
-                        worksheet.write('O'+str(row_record), "{:,.2f}".format(HqTradeData[9][j]/FX133TradeData[35][x]), the_columns)
-                        worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
-                        worksheet.write('Q'+str(row_record), "{:,.2f}".format((HqTradeData[9][j]/HqTradeData[11][j])-(HqTradeData[9][j]/FX133TradeData[35][x])), the_columns)
+                        #dealno = HqTradeData[2][j]
+                        indexed = 0
+
+                        for check133_dealno in FX133TradeData[48]:
+
+                            if (indexed > USDstart_index and indexed < USDstop_index) or (indexed > EURstart_index and indexed < EURstop_index):
+
+                                #print("Skip USD and EUR")
+                                print("Skip USD and EUR")
+
+                            else:
+
+                                if y == check133_dealno:
+
+                                    worksheet.write('M'+str(row_record), "{:,.2f}".format(FX133TradeData[35][indexed]), the_columns)
+
+                                    worksheet.write('N'+str(row_record), "{:,.2f}".format(FX133TradeData[20][indexed]), the_columns)
+                                    worksheet.write('O'+str(row_record), "{:,.2f}".format(FX133TradeData[13][indexed]), the_columns)
+                                    worksheet.write('P'+str(row_record), "{:,.2f}".format(HqTradeData[11][j]), the_columns)
+                                    worksheet.write('Q'+str(row_record), "{:,.2f}".format((FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])), the_columns)
+                                    try:
+                                        sum += (FX133TradeData[20][indexed])-(FX133TradeData[13][indexed])
+                                    except e:
+                                        print("NaN values")
+
+
+                            indexed += 1
+
+
                         '''
                         worksheet.write('M'+str(row_record), str((HqTradeData[9][j]/FX133TradeData[13][x])), the_columns)
                         worksheet.write('N'+str(row_record), FX133TradeData[16][x], the_columns)
@@ -551,6 +724,8 @@ def trade():
 
 
         j+=1
+    worksheet.write('P'+str(row_record), "TOTAL", bold)
+    worksheet.write('Q'+str(row_record), "{:,.2f}".format(sum), bold)
 
     #for delete in files:
 
@@ -564,7 +739,7 @@ def trade():
     print('Records missing equals: ',len(missing_indices))
     print ('See missing records below: ')
     for y in missing_indices:
-        print('Missing index: ',y,'; Deal Number: ',HqTradeData[2][y], '; Currency: ',HqTradeData[7][y],'; Deal Amount: ', "{:,}".format( HqTradeData[9][y] ), '; Creation date: ',HqTradeData[15][y], '; Value date: ',HqTradeData[8][y])
+        print('Missing index: ',y,'; Deal Number: ',HqTradeData[2][y], '; Currency: ',HqTradeData[7][y],'; Deal Amount: ', "{:,}".format( HqTradeData[9][y] ), '; Creation date: ',HqTradeData[15][y], '; Value date CO: ',HqTradeData[8][y])
     print('\n')
 
     x = getPartners
@@ -582,6 +757,24 @@ def trade():
         total_transactions = total_transactions+dict[x]
     print('\n', 'The total number of transactions equals:',total_transactions)
     workbook.close()
+
+
+    '''
+    for h in ALL_indices:
+        dealno = HqTradeData[2][h]
+        index = 0
+        count = 0
+        for check133_dealno in FX133TradeData[48]:
+
+            if dealno == check133_dealno and count < 1:
+                print('Deal Number: ', dealno, 'FX133 index: ', index, 'Market rate: ', FX133TradeData[35][index], 'Base Curr Equiv[CO Rate]: ', FX133TradeData[20][index], 'Base Curr Equiv[Market Rate]: ', FX133TradeData[13][index], 'Value Add: ', (FX133TradeData[20][index] - FX133TradeData[13][index]) )
+                count += 1
+            index += 1
+
+    '''
+
+
+
 
 
 #=======================
