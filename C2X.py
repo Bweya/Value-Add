@@ -225,7 +225,7 @@ def trade():
             date_133US = FX133TradeData[32][x].replace(".","/");
             date_133USobj = datetime.datetime.strptime(date_133US, '%d/%m/%Y')
             periodUS = (date_133USobj-TradeData[9][approved_index[j]]).days
-            if (TradeData[9][approved_index[j]].date()).strftime('%A') == 'Friday':
+            if (date_133USobj.date()).weekday() >= 0 and (TradeData[9][approved_index[j]].date()).weekday() < 5:
 
                 periodUS = periodUS-2
 
@@ -478,7 +478,7 @@ def trade():
             date_133EU = FX133TradeData[32][x].replace(".","/");
             date_133EUobj = datetime.datetime.strptime(date_133EU, '%d/%m/%Y')
             periodEU = (date_133EUobj-TradeData[9][approved_index[j]]).days
-            if (TradeData[9][approved_index[j]].date()).strftime('%A') == 'Friday':
+            if (date_133EUobj.date()).weekday() >= 0 and (TradeData[9][approved_index[j]].date()).weekday() < 5:
 
                 periodEU = periodEU-2
             if y == FX133TradeData[48][x] and HqTradeData[7][j][:3] != 'DKK' and periodEU >= 0:
