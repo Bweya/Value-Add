@@ -735,9 +735,9 @@ def trade():
     worksheet.write('P'+str(row_record), "TOTAL", bold)
     worksheet.write('Q'+str(row_record), "{:,.2f}".format(sum), bold)
 
-    #for delete in files:
+    for delete in files:
 
-        #os.remove('files/'+delete);
+        os.remove('files/'+delete);
 
     missing_indices = []
     for y in range( 0, (ALL_indices[-1] + 1) ):
