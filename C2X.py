@@ -29,7 +29,7 @@ def trade():
     month_dict = {'Jan':1, 'Feb':2, 'Mar':3, 'Apr':4, 'May':5, 'June':6, 'July':7, 'Aug':8, 'Sep':9, 'Oct':10, 'Nov':11, 'Dec':12}
 
     #------EXCEL------
-    workbook = xlsxwriter.Workbook(getmonth.upper()+year+"_Report.xlsx")
+    workbook = xlsxwriter.Workbook(getmonth.upper()+year+"_ValueAdd_Report.xlsx")
     worksheet = workbook.add_worksheet()
     bold = workbook.add_format({'bold': True, 'align':'center', 'bg_color':'#A9A9A9', 'border': 1})
 
@@ -200,7 +200,7 @@ def trade():
     worksheet.write('N3', 'Base Curr Equiv: CO Rate', bold )
     worksheet.write('O3', 'Base Curr Equiv: Market Rate', bold )
     worksheet.write('P3', 'CO Rate / Book Rate', bold )
-    worksheet.write('Q3', 'Value Added', bold )
+    worksheet.write('Q3', 'Value Added (US$)', bold )
 
     '''
     worksheet.write('M3', 'Base Curr Equiv: Market Rate', bold )
@@ -734,6 +734,7 @@ def trade():
         j+=1
     worksheet.write('P'+str(row_record), "TOTAL", bold)
     worksheet.write('Q'+str(row_record), "{:,.2f}".format(sum), bold)
+    worksheet.merge_range('O'+str(row_record+1)+':Q'+str(row_record+1), "Compiled by: Louisa Tinga - Treasury Unit")
 
     for delete in files:
 
