@@ -13,7 +13,6 @@ def trade():
 
     year = '2019'
 
-
     files = os.listdir('files')
 
     for f in files:
